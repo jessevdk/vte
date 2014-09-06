@@ -762,31 +762,6 @@ _vte_pty_getpt(GError **error)
                 return -1;
         }
 
-        rv = fcntl(fd, F_GETFL, 0);
-        if (rv < 0) {
-                int errsv = errno;
-                g_set_error(error, VTE_PTY_ERROR,
-                            VTE_PTY_ERROR_PTY98_FAILED,
-                            "%s failed: %s", "fcntl(F_GETFL)", g_strerror(errno));
-                close(fd);
-                errno = errsv;
-                return -1;
-        }
-
-	/* Set it to blocking. */
-        /* FIXMEchpe: why?? vte_terminal_set_pty does the inverse... */
-        flags = rv & ~(O_NONBLOCK);
-        rv = fcntl(fd, F_SETFL, flags);
-        if (rv < 0) {
-                int errsv = errno;
-                g_set_error(error, VTE_PTY_ERROR,
-                            VTE_PTY_ERROR_PTY98_FAILED,
-                            "%s failed: %s", "fcntl(F_SETFL)", g_strerror(errno));
-                close(fd);
-                errno = errsv;
-                return -1;
-        }
-
 	return fd;
 }
 
